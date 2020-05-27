@@ -8,5 +8,5 @@ urlpatterns = [
     path('register', views.RegisterFormView.as_view()),
     path('logout', views.LogoutView.as_view(), name="logout"),
     path('admin/', admin.site.urls),
-    path('', views.MainPage),
+    # path('', views.MainPage),
 ]
