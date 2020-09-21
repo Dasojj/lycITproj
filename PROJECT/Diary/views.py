@@ -4,7 +4,7 @@ from django.shortcuts import render
 from datetime import datetime
 from django.http import HttpResponse
 from django.views.generic.edit import FormView
-from django.contrib.auth.forms import UserCreationForm
+from Diary.forms import UserCreationForm
 from django.views.generic.base import View
 from django.contrib.auth import logout
 from django.http import HttpResponseRedirect
