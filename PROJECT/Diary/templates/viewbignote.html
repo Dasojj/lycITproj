@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>View note</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <style> html { overflow-x: hidden; }</style>
+</head>
+<body style="background-image:url('https://wallpapercave.com/wp/wp3339214.png'); background-size: cover; background-attachment:fixed;">
+{% include "menu.html" %}
+<div style="position: relative; left:13%; top: 70px;" id="block">
+        <font size="6" color="lime">Просмотр записи: </font>
+        <font size="6" color="lime">{{ title }}</font>
+        <br>
+        <br>
+        <div style="width:85%; word-wrap:break-word;" class="container-xxl bg-dark">
+        <font size="4" color="darkorange"> {{ text }}</font>
+        </div>
+        <br>
+        <input type="button" onclick='location.href="importbignote?notetitle={{ title }}"' value="Импортировать" class="btn btn-lg btn-dark btn-block" style="width: 12%; height: 48; position: relative; left: 5%; font-weight:400">
+</div>
+<script>
+    var block = document.getElementById("block");
+    block.scrollTop = block.scrollHeight
+</script>
+</body>
+</html>

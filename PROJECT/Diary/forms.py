@@ -1,70 +1,67 @@
 from django import forms
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-import unicodedata
-from django.contrib.auth import (
-    authenticate, get_user_model, password_validation,
-)
+from captcha.fields import CaptchaField
+import datetime
 
-class UsernameField(forms.CharField):
-    def to_python(self, value):
-        return unicodedata.normalize('NFKC', super().to_python(value))
+MOOD_CHOICES=(("Happy", "Happy"), ("Full of fun", "Full of fun"), ("Sad", "Sad"), ("Bored", "Bored"))
+COMPLETED_CHOICES=((True, "Yes"), (False, "No"))
+EVENT_CHOICES=(("Sport", "Sport"), ("Job", "Job"), ("Study", "Study"), ("Hobby", "Hobby"), ("Culture", "Culture"), ("Date", "Date"), ("Meeting", "Meeting"), ("Tour", "Tour"), ("Relaxation", "Relaxation"), ("Home", "Home"))
 
-    def widget_attrs(self, widget):
-        return {
-            **super().widget_attrs(widget),
-            'autocapitalize': 'none',
-            'autocomplete': 'username',
-        }
 
-class UserCreationForm(forms.ModelForm):
-    error_messages = {
-        'password_mismatch': ('The two password fields didn’t match.'),
-    }
-    password1 = forms.CharField(
-        label=("Password"),
-        strip=False,
-        widget=forms.PasswordInput(attrs={'autocomplete': 'new-password'}),
-    )
-    password2 = forms.CharField(
-        label=("Password confirmation"),
-        widget=forms.PasswordInput(attrs={'autocomplete': 'new-password'}),
-        strip=False,
-    )
+class SignUpForm(UserCreationForm):
+  email = forms.EmailField(max_length=254, help_text='Этот адрес будет сохранён в вашем профиле')
+  captcha = CaptchaField()
 
-    class Meta:
-        model = User
-        fields = ("username",)
-        field_classes = {'username': UsernameField}
+  class Meta:
+    model = User
+    fields = ('username', 'email', 'password1', 'password2', )
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        if self._meta.model.USERNAME_FIELD in self.fields:
-            self.fields[self._meta.model.USERNAME_FIELD].widget.attrs['autofocus'] = True
+class ChangeEmail(forms.Form):
+  intext = forms.CharField(required=True, label='Change your email')
 
-    def clean_password2(self):
-        password1 = self.cleaned_data.get("password1")
-        password2 = self.cleaned_data.get("password2")
-        if password1 and password2 and password1 != password2:
-            raise forms.ValidationError(
-                self.error_messages['password_mismatch'],
-                code='password_mismatch',
-            )
-        return password2
+class MakeBigNote(forms.Form):
+  title = forms.CharField(required=True, max_length=50)
+  intext = forms.CharField(required=True, widget=forms.Textarea(attrs={'cols':180, 'rows':29}), label='')
 
-    def _post_clean(self):
-        super()._post_clean()
-        # Validate the password after self.instance is updated with form data
-        # by super().
-        password = self.cleaned_data.get('password2')
-        if password:
-            try:
-                password_validation.validate_password(password, self.instance)
-            except forms.ValidationError as error:
-                self.add_error('password2', error)
+class RedactBigNote(forms.Form):
+  intext = forms.CharField(required=True, widget=forms.Textarea(attrs={'cols':180, 'rows':29}), label='')
 
-    def save(self, commit=True):
-        user = super().save(commit=False)
-        user.set_password(self.cleaned_data["password1"])
-        if commit:
-            user.save()
-        return user
+class RedactLittleNote(forms.Form):
+  intext = forms.CharField(required=True, widget=forms.Textarea(attrs={'cols':90, 'rows':10}), label='')
+
+class MakeLittleNote(forms.Form):
+  def __init__(self, *args, **kwargs):
+    kwargs.update(initial={'notifydate': format(datetime.datetime.now(),'%Y-%m-%d %H:%M')})
+    super(MakeLittleNote, self).__init__(*args, **kwargs)
+  title = forms.CharField(required=True, max_length=50)
+  intext = forms.CharField(required=True, widget=forms.Textarea(attrs={'cols':90, 'rows':10}), label='')
+  isnotify = forms.ChoiceField(choices = COMPLETED_CHOICES, required = True, label="Would you like to get a notification?")
+  notifydate = forms.DateTimeField(required=False, initial=format(datetime.datetime.now(),'%Y-%m-%d %H:%M'), widget=forms.DateInput(attrs={'type': 'datetime-local'}), localize=True)
+
+class UploadFile(forms.Form):
+  name = forms.CharField(required=True, max_length=50)
+  file = forms.FileField()
+
+class MakeEventNote(forms.Form):
+  eventdate = forms.TimeField(required=False, initial=format(datetime.datetime.now().time(), '%H:%M'),
+                                  widget=forms.DateInput(attrs={'type': 'datetime-local'}), localize=True, label="Enter time of event")
+  intext = forms.CharField(required=True, widget=forms.Textarea(attrs={'cols':80, 'rows':9}), label='')
+  eventtype = forms.ChoiceField(choices=EVENT_CHOICES, required=True, label="Choose what kind of event do you register",
+                                widget=forms.RadioSelect)
+  image = forms.ImageField()
+
+class RedactEventNote(forms.Form):
+  intext = forms.CharField(required=True, widget=forms.Textarea(attrs={'cols':90, 'rows':10}), label='')
+  eventtype = forms.ChoiceField(choices=EVENT_CHOICES, required=True, label="Choose what kind of event is it",
+                                widget=forms.RadioSelect)
+
+class MakeMoodNote(forms.Form):
+  title = forms.CharField(required=True, max_length=50)
+  mooddate = forms.TimeField(required=False, initial=format(datetime.datetime.now().time(), '%H:%M'),
+                                  widget=forms.DateInput(attrs={'type': 'datetime-local'}), localize=True, label="Enter time of event")
+  intext = forms.CharField(required=True, widget=forms.Textarea(attrs={'cols':80, 'rows':9}), label='')
+  eventtype = forms.ChoiceField(choices=EVENT_CHOICES, required=True, label="Choose what kind of event do you register",
+                                widget=forms.RadioSelect)
+  moodtype = forms.ChoiceField(choices=MOOD_CHOICES, required=True, label="Choose what kind of mood do(did) you have",
+                                widget=forms.RadioSelect)

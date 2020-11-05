@@ -1,0 +1,176 @@
+<script>
+    $(document).ready(function() {
+        $('.nav-link-collapse').on('click', function() {
+            $('.nav-link-collapse').not(this).removeClass('nav-link-show');
+            $(this).toggleClass('nav-link-show');
+        });
+    });
+</script>
+
+<style>
+.nav-link:hover {
+  transition: all 0.4s;
+}
+
+.nav-link-collapse:after {
+  float: right;
+  content: '+';
+  font-family: 'FontAwesome';
+}
+
+.nav-link-show:after {
+  float: right;
+  content: '—';
+}
+
+.nav-item ul.nav-second-level {
+  padding-left: 0;
+}
+
+.nav-item ul.nav-second-level > .nav-item {
+  padding-left: 20px;
+}
+
+@media (min-width: 992px) {
+  .sidenav {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200px;
+    height: calc(100vh - 3.5rem);
+    margin-top: 3.5rem;
+    background: #343a40;
+    box-sizing: border-box;
+    border-top: 1px solid rgba(0, 0, 0, 0.3);
+  }
+
+  .navbar-expand-lg .sidenav {
+    flex-direction: column;
+  }
+}
+</style>
+
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top bg-dark">
+  <a class="navbar-brand" href="/">Advanced Web Diary</a>
+  <button
+    class="navbar-toggler"
+    type="button"
+    data-toggle="collapse"
+    data-target="#navbarCollapse"
+    aria-controls="navbarCollapse"
+    aria-expanded="false"
+    aria-label="Toggle navigation"
+  >
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarCollapse">
+    <ul class="navbar-nav mr-auto sidenav" id="navAccordion">
+      {% if request.user.is_authenticated %}
+      <li class="nav-item active">
+        <a
+          class="nav-link nav-link-collapse"
+          href="bignotelist"
+          id="hasSubItems2"
+          data-toggle="collapse"
+          data-target="#collapseSubItems2"
+          aria-controls="collapseSubItems2"
+          aria-expanded="false"
+        >View your recordings</a>
+        <ul class="nav-second-level collapse" id="collapseSubItems2" data-parent="#navAccordion">
+          <li class="nav-item">
+            <a class="nav-link" href="bignotelist">
+              <span class="nav-link-text">View standart diary notes</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="littlenotelist">
+              <span class="nav-link-text">View little notes</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="moodnotelist">
+              <span class="nav-link-text">View mood registrations</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="eventnotelist">
+              <span class="nav-link-text">View event registrations</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li class="nav-item active">
+        <a
+          class="nav-link nav-link-collapse"
+          href="newnotebig"
+          id="hasSubItems"
+          data-toggle="collapse"
+          data-target="#collapseSubItems3"
+          aria-controls="collapseSubItems3"
+          aria-expanded="false"
+        >Make new note</a>
+        <ul class="nav-second-level collapse" id="collapseSubItems3" data-parent="#navAccordion">
+          <li class="nav-item">
+            <a class="nav-link" href="newnotebig">
+              <span class="nav-link-text">Make standart diary note</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="newnotelittle">
+              <span class="nav-link-text">Make a little note</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li class="nav-item active">
+            <a class="nav-link" href="moodreg">Register your mood</a>
+      </li>
+      <li class="nav-item active">
+            <a class="nav-link" href="eventreg">Register your event</a>
+      </li>
+      <li class="nav-item active">
+        <a
+          class="nav-link nav-link-collapse"
+          href="noteredact"
+          id="hasSubItems"
+          data-toggle="collapse"
+          data-target="#collapseSubItems4"
+          aria-controls="collapseSubItems4"
+          aria-expanded="false"
+        >Redact your recordings</a>
+        <ul class="nav-second-level collapse" id="collapseSubItems4" data-parent="#navAccordion">
+          <li class="nav-item">
+            <a class="nav-link" href="bignotelistred">
+              <span class="nav-link-text">Classic note</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="littlenotelistred">
+              <span class="nav-link-text">Little note</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="eventnotelistred">
+              <span class="nav-link-text">Event registration</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" href="profilesettings">Profile settings</a>
+      </li>
+      {% else %}
+      <li class="nav-item active">
+        <a class="nav-link" href="login">Log in to the diary</a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" href="register">Make a new account</a>
+      </li>
+      {% endif %}
+    </ul>
+    {% if request.user.is_authenticated %}
+    <input type="button" onclick='location.href="logout"' value="Выйти из аккаунта" class="btn btn-lg btn-success btn-block" style="position:relative; width: 220px; height: 48; right:-85%"/>
+    {% endif %}
+  </div>
+</nav>

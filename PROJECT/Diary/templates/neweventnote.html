@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Create note</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <style> html { overflow: hidden; }</style>
+</head>
+<body style="background-image:url('https://wallpapercave.com/wp/wp3339214.png'); background-size: cover; background-attachment:fixed;">
+{% include "menu.html" %}
+<div style="position: relative; left: 13%; top: 70px">
+    <font size="6" color="lime">
+    Here you may register an event:
+    </font>
+<form method="POST" enctype="multipart/form-data">
+    <div style="position: relative; top: 15px">
+    <font style="font-weight: bold">
+    {% csrf_token %}
+    {{ frm.as_p }}
+    </font>
+    </div>
+    <input class="btn btn-lg btn-primary btn-block" type="submit" value="Сохранить" style="width: 9%; height: 50px; position: relative; left: 75%; top: 10px; border:none;">
+    </form>
+</div>
+</body>
+</html>

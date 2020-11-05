@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Profile</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+</head>
+<body style="background-image:url('https://wallpapercave.com/wp/wp3339214.png'); background-size: cover; background-attachment:fixed;">
+{% include "menu.html" %}
+<div style="position: relative; left: 300px; top: 100px; font-weight:bolder;">
+    <font size="7">
+    Your username: {{ thisname }}
+    <br>
+    <br>
+    Your email address: {{ thismail }}
+    <br>
+    <br>
+    </font>
+    <form method="POST">
+    {% csrf_token %}
+        <font size="5">
+            {{ frm }}
+        </font>
+    <br>
+    <br>
+    <input class="btn btn-lg btn-primary btn-block" type="submit" value="Ввести" style="width: 100px; height: 48; position: relative; left: 100px">
+    </form>
+    {% if check == True %}
+        <font size="4">
+            Success
+        </font>
+    {% endif %}
+</div>
+</body>
+</html>

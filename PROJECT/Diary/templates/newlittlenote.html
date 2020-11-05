@@ -6,15 +6,26 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Регистрация</title>
+    <title>Create note</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <style> html { overflow: hidden; }</style>
 </head>
-<body style="position: relative; left: 15px; top: 20px">
+<body style="background-image:url('https://wallpapercave.com/wp/wp3339214.png'); background-size: cover; background-attachment:fixed;">
+{% include "menu.html" %}
+<div style="position: relative; left: 13%; top: 70px">
+    <font size="6" color="lime">
+    Here you may write:
+    </font>
 <form method="POST">
+    <div style="position: relative; top: 15px">
+    <font size="4">
     {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Зарегистрироваться" class="btn btn-lg btn-primary btn-block" style="width: 12%; height: 48; position: relative; left: 100px" >
-</form>
+    {{ frm.as_p }}
+    </font>
+    </div>
+    <input class="btn btn-lg btn-primary btn-block" type="submit" value="Сохранить" style="width: 9%; height: 50px; position: relative; left: 75%; top: 10px; border:none;">
+    </form>
+</div>
 </body>
 </html>

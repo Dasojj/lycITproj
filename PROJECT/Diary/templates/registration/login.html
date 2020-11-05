@@ -10,11 +10,12 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
 </head>
-<body style="position: relative; left: 10px">
-<form method="POST">
+<body style="background-image:url('https://wallpapercave.com/wp/wp3339214.png');">
+{% include "menu.html" %}
+<form method="POST" style="position: relative; left:16%; top:200px; font-weight:bolder;">
     {% csrf_token %}
     {{ form }}
-    <input type="submit" value="Войти">
+    <input type="submit" value="Авторизоваться" class="btn btn-lg btn-dark btn-block" style="width: 12%; height: 48; position: relative; left: 5%; top:20px; font-weight:400"/>
 </form>
 </body>
 </html>

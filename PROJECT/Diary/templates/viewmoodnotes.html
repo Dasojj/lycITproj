@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Note list</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <style> html { overflow-x: hidden; }</style>
+</head>
+<body style="background-image:url('https://wallpapercave.com/wp/wp3339214.png'); background-size: cover; background-attachment:fixed;">
+{% include "menu.html" %}
+<div style="position: relative; left:13%; top: 70px;">
+        <font size="6" color="lime">Ваши записи</font>
+        <input type="button" onclick='location.href="moodnotelistdel"' value="Удалить всё" class="btn btn-lg btn-success btn-block" style="position:relative; width: 160px; height: 48; left: 70%"/>
+        <table class="table table-hover table-bordered" style="position:relative; top:10px; width:85%; background: #cfd8dc;">
+            <thead>
+                <tr scope="row" style="color:blue; font-size: 20px; bg-color:">
+                <th scope="col">Время</th>
+                <th scope="col">Тип настроения</th>
+                <th scope="col">Ссылка</th>
+                </tr>
+            </thead>
+            <tbody>
+                {%for nt in notes%}
+                <tr scope="row" style="color:darkorange; font-size: 19px;">
+                <td>{{ nt.mooddate }}</td>
+                <td>{{ nt.moodtype }}</td>
+                <td><a href="moodnoteview?notetitle={{ nt.title }}">Перейти</a></td>
+                </tr>
+                {%endfor%}
+            </tbody>
+        </table>
+</div>
+</body>
+</html>
