@@ -26,6 +26,7 @@ class EventNote(models.Model):
     notetext = models.CharField(max_length=210, null=True)
     eventtype = models.CharField(max_length=50, null=True)
     eventimage = models.ImageField(null=True, upload_to="images")
+    isaddphoto = models.CharField(max_length=50)
 
 class MoodNote(models.Model):
     creatorname = models.CharField(max_length=50, null=True)
@@ -34,4 +35,9 @@ class MoodNote(models.Model):
     mooddate = models.DateTimeField()
     notetext = models.CharField(max_length=210, null=True)
     eventtype = models.CharField(max_length=50, null=True)
-    moodtype = models.CharField(max_length=50, null=True)
+    moodtype = models.IntegerField(null=True)
+
+class SurveyResults(models.Model):
+    creatorname = models.CharField(max_length=50, null=True)
+    creationdate = models.DateField(auto_now_add=True)
+    score = models.FloatField()

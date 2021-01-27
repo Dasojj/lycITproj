@@ -11,6 +11,11 @@ from Diary.models import *
 from django.core.mail import send_mail
 from background_task import background
 import locale
+from transliterate import translit
+from matplotlib.backends.backend_agg import FigureCanvasAgg
+import matplotlib.pyplot
+import matplotlib.pyplot as plt
+from django.template import loader
 
 locale.setlocale(locale.LC_ALL, '')
 
@@ -32,7 +37,21 @@ class LogoutView(View):
         return HttpResponseRedirect("/")
 
 def MainPage(request):
-    return render(request, "mainpage.html")
+    context = {}
+    if request.method == "GET":
+        context['frm'] = Survey()
+    elif request.method == "POST":
+        o = Survey(request.POST)
+        q1 = int(o.data['quest1'])
+        q2 = int(o.data['quest2'])
+        q3 = int(o.data['quest3'])
+        q4 = int(o.data['quest4'])
+        q5 = int(o.data['quest5'])
+        survscore = (q1+q2+q3+q4+q5)/5
+        newres = SurveyResults(creatorname=request.user.username, score=survscore)
+        newres.save()
+        context['frm'] = o
+    return render(request, "mainpage.html", context)
 
 def profilesettings(request):
     context = {}
@@ -159,7 +178,8 @@ def makenewlittlenote(request):
         if isnot == 'True':
             ndate = (dt.strptime(o.data['notifydate'], '%Y-%m-%d %H:%M')+timedelta(hours=3))
             timeleft = ndate - dt.now() - timedelta(hours=3)
-            littlenotenotify(request.user.username, title, request.user.email, schedule=timeleft)
+            currentprof = Profile.objects.get(username=request.user.username)
+            littlenotenotify(request.user.username, title, currentprof.usermail, schedule=timeleft)
         newnote = LittleNote(creatorname=request.user.username, title=title, notetext=text, notifydate=ndate)
         newnote.save()
         context['frm'] = o
@@ -239,7 +259,7 @@ def importlittlenote(request):
     filename = str(item.title) + ".txt"
     content = str(item.notetext)
     response = HttpResponse(content, content_type='text/plain')
-    response['Content-Disposition'] = 'attachment; filename={0}'.format(filename)
+    response['Content-Disposition'] = 'attachment; filename={0}'.format(translit(filename, "ru", reversed=True))
     return response
 
 def importbignote(request):
@@ -248,7 +268,7 @@ def importbignote(request):
     filename = str(item.title) + ".txt"
     content = str(item.notetext)
     response = HttpResponse(content, content_type='text/plain')
-    response['Content-Disposition'] = 'attachment; filename={0}'.format(filename)
+    response['Content-Disposition'] = 'attachment; filename={0}'.format(translit(filename, "ru", reversed=True))
     return response
 
 def makeneweventnote(request):
@@ -257,11 +277,14 @@ def makeneweventnote(request):
         context['frm'] = MakeEventNote()
     elif request.method == "POST":
         o = MakeEventNote(request.POST, request.FILES)
-        f = request.FILES['image']
+        f = None
         evtype = o.data['eventtype']
         text = o.data['intext']
+        isphoto = o.data['isphoto']
+        if isphoto == 'True':
+            f = request.FILES['image']
         ndate = dt.strptime(str(dt.now().date()) + " " + o.data['eventdate'], '%Y-%m-%d %H:%M')
-        newnote = EventNote(creatorname=request.user.username, eventdate=ndate, notetext=text, eventtype=evtype, eventimage=f)
+        newnote = EventNote(creatorname=request.user.username, eventdate=ndate, notetext=text, eventtype=evtype, eventimage=f, isaddphoto=isphoto)
         newnote.save()
         context['frm'] = o
         return HttpResponseRedirect("eventnotelist")
@@ -279,7 +302,9 @@ def vieweventnote(request):
     context['eventdate'] = item.eventdate
     context['text'] = str(item.notetext)
     context['eventtype'] = str(item.eventtype)
-    context['eventimage'] = item.eventimage
+    context['isphoto'] = item.isaddphoto
+    if item.isaddphoto == 'True':
+        context['eventimage'] = item.eventimage
     return render(request, "vieweventnote.html", context)
 
 def redacteventnotes(request):
@@ -324,7 +349,7 @@ def makenewmoodnote(request):
         o = MakeMoodNote(request.POST)
         titl = o.data['title']
         evtype = o.data['eventtype']
-        mdtype = o.data['moodtype']
+        mdtype = int(o.data['moodtype'])
         text = o.data['intext']
         ndate = dt.strptime(str(dt.now().date()) + " " + o.data['mooddate'], '%Y-%m-%d %H:%M')
         newnote = MoodNote(creatorname=request.user.username, title=titl, mooddate=ndate, notetext=text, eventtype=evtype, moodtype=mdtype)
@@ -352,3 +377,45 @@ def deletemoodnotes(request):
     current = MoodNote.objects.filter(creatorname = request.user.username)
     current.delete()
     return HttpResponseRedirect("moodnotelist")
+
+def showstats(request):
+    mdevindtmp = []
+    mdevind = []
+    mdevval = []
+    mdtype = []
+    mdtime = []
+    srtime = []
+    srscore = []
+    mdnotes = MoodNote.objects.filter(creatorname = request.user.username)
+    for md in mdnotes:
+        mdevindtmp.append(md.eventtype)
+    mdevindtmp = set(mdevindtmp)
+    for n in mdevindtmp:
+        mdevind.append(n)
+        tmp = MoodNote.objects.filter(creatorname = request.user.username).filter(eventtype = n)
+        mdevval.append(sum([int(i.moodtype) for i in tmp])/len(tmp))
+    for md in mdnotes:
+        mdtype.append(md.eventtype)
+        mdtime.append(md.mooddate)
+    sures = SurveyResults.objects.filter(creatorname = request.user.username)
+    for sr in sures:
+        srscore.append(sr.score)
+        srtime.append(sr.creationdate)
+    f = plt.figure(figsize=(16, 7))
+    plt.subplot(131)
+    plt.bar(mdevind, mdevval)
+    plt.title("Mood-event stat")
+    plt.subplot(132)
+    plt.plot(srtime, srscore)
+    plt.title("Communication-time stat")
+    plt.subplot(133)
+    plt.plot(mdtime, mdtype)
+    plt.title("Mood-time stat")
+    canvas = FigureCanvasAgg(f)
+    resp = HttpResponse(content_type='image/png')
+    canvas.print_png(resp)
+    plt.close(f)
+    return resp
+
+def rendstats(request):
+    return render(request, "statistics.html")

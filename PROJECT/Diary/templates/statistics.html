@@ -13,22 +13,15 @@
 </head>
 <body style="background-image:url('https://wallpapercave.com/wp/wp3339214.png'); background-size: cover; background-attachment:fixed;">
 {% include "menu.html" %}
-<div style="position: relative; left:13%; top: 70px; width: 96%">
-        <font size="6" color="lime">Просмотр записи от {{ eventdate }} </font>
-        <br>
-        <font size="6" color="darkorange">Тип события: {{ eventtype }} </font>
-        <br>
-        <br>
-        {% if isphoto == 'True' %}
-        <img src="{{ eventimage.url }}" height="600" width="750">
-        <br>
-        <br>
-        {% endif %}
-        <div style="width:40%; word-wrap:break-word;"> <font size="5" color="darkorange" style="font-weight: bold">{{ text }}</font> </div>
-        <br>
-        <br>
-        <br>
-        <br>
+<div style="position: relative; left:13%; top: 70px;" id="block">
+        <font size="6" color="lime">Просмотр статистики </font>
+        <br/>
+        <br/>
+        <img src="getstatpng" />
 </div>
+<script>
+    var block = document.getElementById("block");
+    block.scrollTop = block.scrollHeight
+</script>
 </body>
 </html>
